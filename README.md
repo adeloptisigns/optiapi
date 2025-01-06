@@ -1,70 +1,231 @@
-# Getting Started with Create React App
+# OptiSigns API Demo App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a demonstration of how to use the **OptiSigns API** to interact with digital signage content. It showcases various GraphQL API functionalities provided by OptiSigns, including pairing screens, managing playlists, fetching assets, and more.
 
-## Available Scripts
+This app was built using **React** and deployed using **GitHub Pages** to demonstrate how developers can leverage the **OptiSigns GraphQL API** to manage digital signage screens and content programmatically.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 **Project Overview**
+This app interacts with the **OptiSigns GraphQL API**, which provides a flexible way to manage digital signage content from an external application. The API allows developers to pair devices, update screens, create and manage playlists, and more.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The project demonstrates key API functionalities such as:
+- Pairing a screen using a pairing code.
+- Renaming paired screens and assigning assets or playlists.
+- Fetching device and asset information.
+- Creating, updating, and managing playlists.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 📚 **What is the OptiSigns API?**
+The **OptiSigns API** is organized around **GraphQL**, a query language for APIs that enables clients to request only the data they need. It provides a single endpoint to access the full capabilities of the OptiSigns platform.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### **Why GraphQL?**
+- **Single Endpoint:** Unlike REST APIs that have multiple endpoints, GraphQL APIs use a single endpoint to access all resources.
+- **Efficient Data Fetching:** GraphQL allows you to fetch multiple resources in a single request, minimizing over-fetching and under-fetching.
+- **No Versioning:** The GraphQL API evolves over time without breaking existing queries.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🔑 **Setting Up the API Key**
+To use the **OptiSigns API**, you need an **API key** to authenticate your requests.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Go to your OptiSigns account and navigate to **API Keys**.
+2. Click **New API Key**.
+3. Enter a name for your key and set the necessary permissions.
+4. Save your API key securely.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Use your API key in the **Authorization** header of your HTTP requests:
 
-### `npm run eject`
+```
+Authorization: Bearer YOUR_API_KEY
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📋 **Core Features Demonstrated in This App**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 1️⃣ **Pair Device**
+The app allows you to pair a screen using the `pairDevice` mutation.
+- **Mutation Example:**
+  ```graphql
+  mutation {
+    pairDevice(payload: { pairingCode: "M9JTSY" }) {
+      _id
+      deviceName
+      UUID
+      pairingCode
+      currentType
+      currentAssetId
+      localAppVersion
+    }
+  }
+  ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 2️⃣ **Rename and Assign Content to a Screen**
+You can change the screen name and assign an asset or playlist to the screen using the `updateDevice` mutation.
+- **Mutation Example (Assign Asset):**
+  ```graphql
+  mutation {
+    updateDevice(_id: "screen-id", payload: {
+      deviceName: "New Device Name",
+      currentType: ASSET,
+      currentAssetId: "asset-id",
+      orientation: LANDSCAPE
+    }) {
+      _id
+      deviceName
+      UUID
+    }
+  }
+  ```
+- **Mutation Example (Assign Playlist):**
+  ```graphql
+  mutation {
+    updateDevice(_id: "screen-id", payload: {
+      deviceName: "New Device Name",
+      currentType: PLAYLIST,
+      currentAssetId: "playlist-id",
+      orientation: LANDSCAPE
+    }) {
+      _id
+      deviceName
+      UUID
+    }
+  }
+  ```
 
-## Learn More
+### 3️⃣ **Create and Manage Playlists**
+The app demonstrates how to create playlists, add items to playlists, update playlist items (such as changing the duration of assets), and remove items from playlists.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### **Create a Playlist**
+- **Mutation Example:**
+  ```graphql
+  mutation {
+    savePlaylist(payload: { name: "Demo Playlist" }) {
+      _id
+      name
+    }
+  }
+  ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### **Add Items to a Playlist**
+- **Mutation Example:**
+  ```graphql
+  mutation {
+    addPlaylistItems(_id: "playlist-id", payload: {
+      ids: ["item-id-1", "item-id-2"],
+      pos: 1
+    }) {
+      _id
+      fileType
+      filename
+    }
+  }
+  ```
 
-### Code Splitting
+#### **Update Playlist Items**
+- **Mutation Example:**
+  ```graphql
+  mutation {
+    updatePlaylistItems(_id: "playlist-id", payload: {
+      items: [{ item: { duration: 30 }, pos: [0] }]
+    }) {
+      _id
+      duration
+    }
+  }
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### **Remove Items from a Playlist**
+- **Mutation Example:**
+  ```graphql
+  mutation {
+    removePlaylistItems(_id: "playlist-id", payload: { pos: [0] }) {
+      _id
+    }
+  }
+  ```
 
-### Analyzing the Bundle Size
+### 4️⃣ **Fetch Device and Asset Information**
+The app can query the OptiSigns API to fetch device and asset information.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### **Fetch Devices**
+- **Query Example:**
+  ```graphql
+  query {
+    devices(query: {}) {
+      page {
+        edges {
+          node {
+            _id
+            deviceName
+          }
+        }
+      }
+    }
+  }
+  ```
 
-### Making a Progressive Web App
+#### **Fetch Specific Asset**
+- **Query Example:**
+  ```graphql
+  query {
+    assets(query: { originalFileName: "Sample Image 1.JPG" }) {
+      page {
+        edges {
+          node {
+            _id
+            name
+          }
+        }
+      }
+    }
+  }
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+### **Error Handling**
+When the API encounters an error, it returns an **error object** in the response. The app shows how to handle these errors and display appropriate messages to the user.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Example Error Response:
+```json
+{
+  "errors": [
+    {
+      "message": "This device is already paired",
+      "extensions": {
+        "code": "406",
+        "response": {
+          "statusCode": 406,
+          "error": "Not Acceptable"
+        }
+      }
+    }
+  ]
+}
+```
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 💻 **Tech Stack**
+- **React** for the front-end UI.
+- **Apollo Client** for managing GraphQL queries and mutations.
+- **Bootstrap** for styling.
+- **GitHub Pages** for deployment.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🌐 **Deployed URL**
+The app is live at: **https://adeloptisigns.github.io/optiapi/**
+
+---
+
+## 🤝 **Contributions**
+This project is a demonstration and not intended for production use. Contributions are welcome to improve the functionality and showcase more features of the OptiSigns API.
+
+---
+
+Happy coding! 🎉
+
