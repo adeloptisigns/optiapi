@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/optiapi/static/css/main.49faa5e3.css",
+    "main.js": "/optiapi/static/js/main.f3bcdded.js",
+    "index.html": "/optiapi/index.html",
+    "main.49faa5e3.css.map": "/optiapi/static/css/main.49faa5e3.css.map",
+    "main.f3bcdded.js.map": "/optiapi/static/js/main.f3bcdded.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.49faa5e3.css",
+    "static/js/main.f3bcdded.js"
+  ]
+}
